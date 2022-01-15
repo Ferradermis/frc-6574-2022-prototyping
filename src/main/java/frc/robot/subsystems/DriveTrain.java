@@ -9,6 +9,7 @@ package frc.robot.subsystems;
 
 import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.I2C;
@@ -20,9 +21,9 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class DriveTrain extends SubsystemBase {
     final int FRONT_LEFT_CAN_ID = 1;
-    final int BACK_LEFT_CAN_ID = 2;
-    final int FRONT_RIGHT_CAN_ID = 3;
-    final int BACK_RIGHT_CAN_ID = 4;
+    final int BACK_LEFT_CAN_ID = 4;
+    final int FRONT_RIGHT_CAN_ID = 2;
+    final int BACK_RIGHT_CAN_ID = 3;
   // Put methods for controlling this subsystem
   // here. Call these from Commands.
   public static AHRS gyro = new AHRS(I2C.Port.kMXP);
@@ -215,27 +216,34 @@ public class DriveTrain extends SubsystemBase {
     double currentLimitThresholdTime = 1.0;
   
 
+    frontLeft.restoreFactoryDefaults();
+    frontRight.restoreFactoryDefaults();
+    backLeft.restoreFactoryDefaults();
+    backRight.restoreFactoryDefaults();
+
+
     gyro.enableLogging(false);
 
     //Enables motors to follow commands sent to front and left 
     
     backLeft.follow(frontLeft);
     backRight.follow(frontRight);
- 
-    /*
-    frontLeft.configFactoryDefault();
-    frontRight.configFactoryDefault();
-    backLeft.configFactoryDefault();
-    backRight.configFactoryDefault();
   
-
+    /*
     frontLeft.configOpenloopRamp(rampRate);
     backLeft.configOpenloopRamp(rampRate);
     frontRight.configOpenloopRamp(rampRate);
     backRight.configOpenloopRamp(rampRate);
     */
+    frontLeft.setInverted(false);
+    backLeft.setInverted(false);
     frontRight.setInverted(true);
     backRight.setInverted(true);
+
+    frontLeft.setIdleMode(IdleMode.kBrake);
+    backLeft.setIdleMode(IdleMode.kBrake);
+    frontRight.setIdleMode(IdleMode.kBrake);
+    backRight.setIdleMode(IdleMode.kBrake);
     /*
     frontLeft.setNeutralMode(NeutralMode.Brake);
     backLeft.setNeutralMode(NeutralMode.Brake);
