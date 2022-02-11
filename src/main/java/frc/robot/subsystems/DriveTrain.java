@@ -15,22 +15,21 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
+import frc.robot.RobotContainer;
 
 
 
 
 public class DriveTrain extends SubsystemBase {
-    final int FRONT_LEFT_CAN_ID = 1;
-    final int BACK_LEFT_CAN_ID = 4;
-    final int FRONT_RIGHT_CAN_ID = 2;
-    final int BACK_RIGHT_CAN_ID = 3;
+    
   // Put methods for controlling this subsystem
   // here. Call these from Commands.
   public static AHRS gyro = new AHRS(I2C.Port.kMXP);
-  private CANSparkMax frontLeft = new CANSparkMax (FRONT_LEFT_CAN_ID, MotorType.kBrushless);
-  private CANSparkMax backLeft = new CANSparkMax (BACK_LEFT_CAN_ID, MotorType.kBrushless);
-  private CANSparkMax frontRight = new CANSparkMax (FRONT_RIGHT_CAN_ID, MotorType.kBrushless);
-  private CANSparkMax backRight = new CANSparkMax (BACK_RIGHT_CAN_ID, MotorType.kBrushless);
+  private CANSparkMax frontLeft = new CANSparkMax(Constants.FRONT_LEFT_CAN_ID, MotorType.kBrushless);
+  private CANSparkMax backLeft = new CANSparkMax(Constants.BACK_LEFT_CAN_ID, MotorType.kBrushless);
+  private CANSparkMax frontRight = new CANSparkMax(Constants.FRONT_RIGHT_CAN_ID, MotorType.kBrushless);
+  private CANSparkMax backRight = new CANSparkMax(Constants.BACK_RIGHT_CAN_ID, MotorType.kBrushless);
 
   // following variable are used in turnToHeading and driveAlongAngle
   final double MaxDriveSpeed = 0.3;//was .15
@@ -43,11 +42,42 @@ public class DriveTrain extends SubsystemBase {
     gyro.calibrate();
   }
 
+  int frameCount = 0;
+  int bufferWidth = 25;
+  double[] frontLeftBuffer = new double[bufferWidth];
+  double[] backLeftBuffer = new double[bufferWidth];
+  double[] frontRightBuffer = new double[bufferWidth];
+  double[] backRightBuffer = new double[bufferWidth];
+
+  double getArrayAverage(double[] array) {
+    double sum = 0;
+    for (int i = 0; i < array.length; i++) {
+        sum += array[i];
+    }
+    return sum / array.length;
+  }
+
   @Override
   public void periodic() {
+    frameCount++;
+    frontLeftBuffer[frameCount % bufferWidth] = frontLeft.getOutputCurrent();
+    backLeftBuffer[frameCount % bufferWidth] = backLeft.getOutputCurrent();
+    frontRightBuffer[frameCount % bufferWidth] = frontRight.getOutputCurrent();
+    backRightBuffer[frameCount % bufferWidth] = backRight.getOutputCurrent();
+
+
     // This method will be called once per scheduler run
     SmartDashboard.putNumber("Actual Gyro Heading: ", gyro.getAngle());
     SmartDashboard.putNumber("Acual Drive Position: ", getPosition());
+    SmartDashboard.putNumber("Front left current", getArrayAverage(frontLeftBuffer));
+    SmartDashboard.putNumber("Back left current ", getArrayAverage(backLeftBuffer));
+    SmartDashboard.putNumber("Front right current  ", getArrayAverage(frontRightBuffer));
+    SmartDashboard.putNumber("Back right current ", getArrayAverage(backRightBuffer));
+
+    SmartDashboard.putNumber("Front left PDH", RobotContainer.pdh.getCurrent(Constants.FRONT_LEFT_PDH_PORT));
+    SmartDashboard.putNumber("Back left PDH ", RobotContainer.pdh.getCurrent(Constants.BACK_LEFT_PDH_PORT));
+    SmartDashboard.putNumber("Front right PDH  ", RobotContainer.pdh.getCurrent(Constants.FRONT_RIGHT_PDH_PORT));
+    SmartDashboard.putNumber("Back right PDH ", RobotContainer.pdh.getCurrent(Constants.BACK_RIGHT_PDH_PORT));
   }
 
   /**
@@ -66,15 +96,10 @@ public class DriveTrain extends SubsystemBase {
     double leftSpeed = drive + steer;
     double rightSpeed = drive - steer;
     
-    if (leftSpeed > 1) { leftSpeed = 1; }
-      else if (leftSpeed < -1) {leftSpeed = -1;}
-
-    if (rightSpeed  > 1) {rightSpeed = 1;}
-     else if (rightSpeed < -1) {rightSpeed = -1;} 
      
    
-     frontLeft.set(-leftSpeed);
-     frontRight.set(-rightSpeed);
+     frontLeft.set(leftSpeed);
+     frontRight.set(rightSpeed);
   }
 
     /**

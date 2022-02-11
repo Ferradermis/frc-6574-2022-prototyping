@@ -35,12 +35,13 @@ public class ArcadeDrive extends CommandBase {
     // Read data from joystick and drive per joystick positioning
     double y = RobotContainer.oi.getDriverLeftY();
     double x = -RobotContainer.oi.getDriverRightX(); 
+    
   
     drive_cmd = Math.pow(y, 3) * 1;
     steer_cmd = Math.pow(x, 3) * .75;
   
     // throttle is constant that controls "speed" of robot; helpful in testing in small areas
-    RobotContainer.driveTrain.arcadeDrive(drive_cmd, steer_cmd);   
+    RobotContainer.driveTrain.arcadeDrive(drive_cmd, -steer_cmd);   
   }
 
   // Make this return true when this Command no longer needs to run execute()
