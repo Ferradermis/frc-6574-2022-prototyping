@@ -51,6 +51,9 @@ public class Robot extends TimedRobot {
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
+
+    SmartDashboard.putBoolean("Voltage above 10.5", RobotContainer.pdh.getVoltage()> 10.5);
+
     //double sum = (RobotContainer.pdh.getCurrent(Constants.FRONT_LEFT_PDH_PORT) + RobotContainer.pdh.getCurrent(Constants.BACK_LEFT_PDH_PORT) + RobotContainer.pdh.getCurrent(Constants.FRONT_RIGHT_PDH_PORT) + RobotContainer.pdh.getCurrent(Constants.BACK_RIGHT_PDH_PORT));
     double sum = 0;
     for (int port = 0; port <= 23; port++) {
@@ -60,6 +63,7 @@ public class Robot extends TimedRobot {
     sumOfSum += sum;
     SmartDashboard.putNumber("Ah", sumOfSum/1000/60/60);
     lastTime = System.currentTimeMillis();
+
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
