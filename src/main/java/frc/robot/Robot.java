@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.commands.ArcadeDrive;
@@ -40,6 +41,9 @@ public class Robot extends TimedRobot {
    * <p>This runs after the mode specific periodic functions, but before LiveWindow and
    * SmartDashboard integrated updating.
    */
+  long lastTime = System.currentTimeMillis();
+  double sumOfSum = 0;
+
   @Override
   public void robotPeriodic() {
     // Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
@@ -47,6 +51,15 @@ public class Robot extends TimedRobot {
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
+    //double sum = (RobotContainer.pdh.getCurrent(Constants.FRONT_LEFT_PDH_PORT) + RobotContainer.pdh.getCurrent(Constants.BACK_LEFT_PDH_PORT) + RobotContainer.pdh.getCurrent(Constants.FRONT_RIGHT_PDH_PORT) + RobotContainer.pdh.getCurrent(Constants.BACK_RIGHT_PDH_PORT));
+    double sum = 0;
+    for (int port = 0; port <= 23; port++) {
+      sum += RobotContainer.pdh.getCurrent(port);
+    }
+    sum *= (double)(System.currentTimeMillis() - lastTime);
+    sumOfSum += sum;
+    SmartDashboard.putNumber("Ah", sumOfSum/1000/60/60);
+    lastTime = System.currentTimeMillis();
   }
 
   /** This function is called once each time the robot enters Disabled mode. */

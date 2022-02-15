@@ -7,6 +7,8 @@
 
 package frc.robot.subsystems;
 
+import java.util.Date;
+
 import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
@@ -57,27 +59,55 @@ public class DriveTrain extends SubsystemBase {
     return sum / array.length;
   }
 
+  //Date date = new Date();
+  //long lastTime = date.getTime();
+  //long lastTime = System.currentTimeMillis();
+  //double sumOfSum = 0;
+
   @Override
   public void periodic() {
     frameCount++;
-    frontLeftBuffer[frameCount % bufferWidth] = frontLeft.getOutputCurrent();
-    backLeftBuffer[frameCount % bufferWidth] = backLeft.getOutputCurrent();
-    frontRightBuffer[frameCount % bufferWidth] = frontRight.getOutputCurrent();
-    backRightBuffer[frameCount % bufferWidth] = backRight.getOutputCurrent();
+    //frontLeftBuffer[frameCount % bufferWidth] = frontLeft.getOutputCurrent();
+    //backLeftBuffer[frameCount % bufferWidth] = backLeft.getOutputCurrent();
+    //frontRightBuffer[frameCount % bufferWidth] = frontRight.getOutputCurrent();
+    //backRightBuffer[frameCount % bufferWidth] = backRight.getOutputCurrent();
 
 
     // This method will be called once per scheduler run
     SmartDashboard.putNumber("Actual Gyro Heading: ", gyro.getAngle());
     SmartDashboard.putNumber("Acual Drive Position: ", getPosition());
-    SmartDashboard.putNumber("Front left current", getArrayAverage(frontLeftBuffer));
-    SmartDashboard.putNumber("Back left current ", getArrayAverage(backLeftBuffer));
-    SmartDashboard.putNumber("Front right current  ", getArrayAverage(frontRightBuffer));
-    SmartDashboard.putNumber("Back right current ", getArrayAverage(backRightBuffer));
+    //SmartDashboard.putNumber("Front left current", getArrayAverage(frontLeftBuffer));
+    //SmartDashboard.putNumber("Back left current ", getArrayAverage(backLeftBuffer));
+    //SmartDashboard.putNumber("Front right current  ", getArrayAverage(frontRightBuffer));
+    //SmartDashboard.putNumber("Back right current ", getArrayAverage(backRightBuffer));
 
-    SmartDashboard.putNumber("Front left PDH", RobotContainer.pdh.getCurrent(Constants.FRONT_LEFT_PDH_PORT));
-    SmartDashboard.putNumber("Back left PDH ", RobotContainer.pdh.getCurrent(Constants.BACK_LEFT_PDH_PORT));
-    SmartDashboard.putNumber("Front right PDH  ", RobotContainer.pdh.getCurrent(Constants.FRONT_RIGHT_PDH_PORT));
-    SmartDashboard.putNumber("Back right PDH ", RobotContainer.pdh.getCurrent(Constants.BACK_RIGHT_PDH_PORT));
+    //SmartDashboard.putNumber("Front left PDH", RobotContainer.pdh.getCurrent(Constants.FRONT_LEFT_PDH_PORT));
+    //SmartDashboard.putNumber("Back left PDH ", RobotContainer.pdh.getCurrent(Constants.BACK_LEFT_PDH_PORT));
+    //SmartDashboard.putNumber("Front right PDH  ", RobotContainer.pdh.getCurrent(Constants.FRONT_RIGHT_PDH_PORT));
+    //SmartDashboard.putNumber("Back right PDH ", RobotContainer.pdh.getCurrent(Constants.BACK_RIGHT_PDH_PORT));
+    //double sum = (RobotContainer.pdh.getCurrent(Constants.FRONT_LEFT_PDH_PORT) + RobotContainer.pdh.getCurrent(Constants.BACK_LEFT_PDH_PORT) + RobotContainer.pdh.getCurrent(Constants.FRONT_RIGHT_PDH_PORT) + RobotContainer.pdh.getCurrent(Constants.BACK_RIGHT_PDH_PORT));
+    //sum *= (double)(date.getTime() - lastTime);
+   // sum *= (double)(System.currentTimeMillis() - lastTime);
+    //sum *= (1/50);
+    //sumOfSum += sum;
+
+   // SmartDashboard.putNumber("Ah", sumOfSum/1000/60/60);
+    //SmartDashboard.putNumber("Ah", sumOfSum);
+
+    if (frameCount == 10) {
+      frameCount = 0;
+      SmartDashboard.putNumber("Front left SPARK", frontLeft.getOutputCurrent());
+      SmartDashboard.putNumber("Back left SPARK", backLeft.getOutputCurrent());
+      SmartDashboard.putNumber("Front right SPARK", frontRight.getOutputCurrent());
+      SmartDashboard.putNumber("Back right SPARK", backRight.getOutputCurrent());
+
+      SmartDashboard.putNumber("Front left PDH", RobotContainer.pdh.getCurrent(Constants.FRONT_LEFT_PDH_PORT));
+      SmartDashboard.putNumber("Back left PDH", RobotContainer.pdh.getCurrent(Constants.BACK_LEFT_PDH_PORT));
+      SmartDashboard.putNumber("Front right PDH", RobotContainer.pdh.getCurrent(Constants.FRONT_RIGHT_PDH_PORT));
+      SmartDashboard.putNumber("Back right PDH", RobotContainer.pdh.getCurrent(Constants.BACK_RIGHT_PDH_PORT));
+    }
+    //lastTime = date.getTime();
+    //lastTime = System.currentTimeMillis();
   }
 
   /**
